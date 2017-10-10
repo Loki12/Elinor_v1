@@ -4,7 +4,6 @@ import com.sergejninzyy.Models.Cards.Narod;
 import com.sergejninzyy.Models.Cards.Unit;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Intellect extends Player {
 

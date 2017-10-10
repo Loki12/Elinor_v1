@@ -37,16 +37,6 @@ public class Main {
                 gameObject.AddCardtoPlayeronFiels(1, unit, curr_field);
             }
         }
-
-
-
-        //Тесты соседей
-        /*
-        ArrayList<Field> neighbours = gameObject.FindField(0, 2, -2).GetNeighbours(1);
-        for (Field f: neighbours) {
-            System.out.println(f.getX() + " " + f.getY() + " " + f.getZ());
-        }*/
-
     }
 
     private static Field ChoseField(Player player, Unit unit) {

@@ -2,12 +2,13 @@ package com.sergejninzyy.Models.Cards;
 
 public enum Ability {
 
+    ATTACK,
     HEAL,
     STAN,
     TOANIMAL,
     TOVEDICH,
     TOHITS,
     COMEBACK_CHEKATTA,
-    FIRE_ARROW
+    DOUBLE_ATTACK, FIRE_ARROW
 
 }

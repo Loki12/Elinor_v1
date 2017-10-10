@@ -1,9 +1,11 @@
 package com.sergejninzyy.Models;
 
 import com.sergejninzyy.Main;
+import com.sergejninzyy.Models.Cards.Ability;
 import com.sergejninzyy.Models.Cards.Unit;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Field {
 
@@ -20,6 +22,21 @@ public class Field {
         this.y = y;
         this.z = z;
         this.unit = unit;
+    }
+
+    public Player whosfield()
+    {
+        for (Player p: Main.gameObject.players) {
+            if (p.getPlayersfields().contains(this)) return p;
+        }
+        return null;
+    }
+
+    public Field copyField()
+    {
+        Unit unit = this.unit.copyUnit();
+        Field field = new Field(this.x, this.y, this.z, unit);
+        return  field;
     }
 
     public Unit getUnit() {
@@ -92,5 +109,25 @@ public class Field {
     public String getCoordinats()
     {
         return x + " " + y + " " + z;
+    }
+
+
+    //TODO дописать остальные способоности
+    public ArrayList<Field> getAimofAbility(Ability ability, Player player) {
+        ArrayList<Field> result = new ArrayList<>();
+        if (ability == Ability.TOVEDICH|| ability == Ability.TOANIMAL) result.add(this);
+        if (ability == Ability.ATTACK||ability == Ability.STAN) result.addAll(this.find_aims_to_attack(player));
+
+        return result;
+    }
+
+    private Collection<? extends Field> find_aims_to_attack(Player player) {
+        ArrayList<Field> result = new ArrayList<>();
+
+        result.addAll(this.GetNeighbours(1));
+        for (Field f: result) {
+            if(f.getUnit()==null || f.whosfield() == player || f.getUnit().animal) result.remove(f);
+        }
+        return result;
     }
 }

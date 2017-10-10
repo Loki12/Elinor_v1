@@ -1,9 +1,11 @@
 package com.sergejninzyy;
 
+import com.sergejninzyy.Models.Cards.Ability;
 import com.sergejninzyy.Models.Cards.Unit;
 import com.sergejninzyy.Models.Field;
 import com.sergejninzyy.Models.Intellect;
 import com.sergejninzyy.Models.Player;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,8 +14,8 @@ import java.util.Scanner;
 
 public class GameObject {
 
-    private ArrayList<Player> players;
-    private ArrayList<Field> fields;
+    public ArrayList<Player> players;
+    public ArrayList<Field> fields;
 
     public GameObject(){
         fields = new ArrayList<>();
@@ -25,6 +27,17 @@ public class GameObject {
             e.printStackTrace();
         }
         FillPlayers();
+    }
+
+    public GameObject gameObjectClone ()
+    {
+        GameObject gameObject = new GameObject();
+
+        ArrayList<Player> new_players = new ArrayList<>();
+        for (Player p: this.players) {
+            new_players.add(p.copyPlayer());
+        }
+        return gameObject;
     }
 
     private void FillPlayers() {
@@ -110,4 +123,28 @@ public class GameObject {
 
     }
 
+
+    //TODO check
+    public int attack(Field f1, Field f2)
+    {
+            f2.getUnit().setHits(f2.getUnit().getHits()-f1.getUnit().getAttack());
+            if (f2.getUnit().getHits()<1)
+            {
+                f2.whosfield().dead_units.add(f2.getUnit());
+                f2.setUnit(null);
+                return 2;
+            }
+            else return 1;
+    }
+
+    //Todo доедлать остальные способности
+    //возвращает состояние всего поля и оценку эффективности
+    public Pair<GameObject, Integer> Action(Ability ability, Field unitfield, Field aimofability, Integer eff) {
+
+        Integer mark = eff;
+        if (ability == Ability.ATTACK) {
+           mark = this.attack(unitfield, aimofability);
+        }
+        return new Pair<>(this, mark);
+    }
 }
