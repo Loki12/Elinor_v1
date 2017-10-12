@@ -1,7 +1,6 @@
 package com.sergejninzyy.Models;
 
 import com.sergejninzyy.GameObject;
-import com.sergejninzyy.Main;
 import com.sergejninzyy.Models.Cards.Ability;
 import javafx.util.Pair;
 
@@ -20,7 +19,10 @@ public class Module_of_prediction {
     public GameObject predict(GameObject gameObject, int rage, int depth) {
 
         //список возможных состояний после моего хода и их эффективность
-        ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, 0, Main.gameObject.getPlayer(1));
+        ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, 0, gameObject.getPlayer(1));
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //хочу увидеть список первых ходов с оценкой их эффективности
 
         ArrayList<Pair<GameObject, Integer>> res = new ArrayList<>();
 
@@ -48,7 +50,7 @@ public class Module_of_prediction {
     private Pair<GameObject, Integer> count_effective(GameObject gameObject, int depth, Integer effectiv) {
         //сколько раз мы это повторяем
         //todo проверить деление по модулю
-        ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, effectiv, Main.gameObject.getPlayer(depth % 2));
+        ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, effectiv, gameObject.getPlayer(depth % 2));
 
         if (depth == 1) return new Pair<>(gameObject, count(first_steps_effective));
         depth -= 1;
@@ -85,6 +87,15 @@ public class Module_of_prediction {
             possible_steps.addAll(possible_steps(f, gameObject));
         }
 
+        //!!!!!!!!!
+        //список первых ходов
+
+        System.out.println("Список первых ходов");
+        for (Pair<GameObject, Field> pair: possible_steps) {
+            System.out.println(pair.getValue().getCoordinats());
+        }
+
+
         //список состояний доcки после хода и действия
         ArrayList<Pair<GameObject, Integer>> possible_actions = new ArrayList<>();
         for (Pair<GameObject, Field> pair : possible_steps) {
@@ -105,6 +116,8 @@ public class Module_of_prediction {
 
         ArrayList<Pair<GameObject, Field>> common_result = new ArrayList<>();
         ArrayList<Field> result;
+
+        //находим всех соседей данного поля
         if (old_field.getUnit().getSteps() == 2) {
             //TODO исправить ходы у гуавара
             result = old_field.GetNeighbours(2);
@@ -119,11 +132,11 @@ public class Module_of_prediction {
             }
         }
 
+        //создаем клона gameobject для каждого варианта хода, ходим на каждом клоне и записываем изменненые клоны поля и поля в массив
         for (Field new_field: free_fields) {
             GameObject gameObjectClone = gameObject.gameObjectClone();
             gameObjectClone.ChangeFieldofcard(old_field, new_field);
             common_result.add(new Pair<>(gameObjectClone, new_field));
-
         }
 
         return common_result;

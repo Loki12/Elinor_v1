@@ -1,15 +1,12 @@
 package com.sergejninzyy;
 
-import com.sergejninzyy.Models.Cards.Ability;
 import com.sergejninzyy.Models.Cards.Narod;
 import com.sergejninzyy.Models.Cards.Unit;
 import com.sergejninzyy.Models.Field;
-import com.sergejninzyy.Models.Intellect;
 import com.sergejninzyy.Models.Module_of_prediction;
 import com.sergejninzyy.Models.Player;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -17,17 +14,21 @@ public class Main {
 
     private static final int LVL = 2;
     public static GameObject gameObject = new GameObject(LVL);
-    public static Player player = gameObject.getPlayer(0);
-    public static Player intellect = gameObject.getPlayer(1);
+    Player player = gameObject.getPlayer(0);
+    Player intellect = gameObject.getPlayer(1);
 
     public static void main(String[] args) throws IOException {
+
+        GameObject gameObject = new GameObject(LVL);
+        Player player = gameObject.getPlayer(0);
+        Player intellect = gameObject.getPlayer(1);
 
       /*  System.out.println("Игра началась");
 
         for (int i = 0; i < 6; i++) {
 
             //игрок выбирает поле
-            System.out.println("Ваши координаты - " + ChoseField(player, RandomGenerateUnit()).getCoordinats() + "\n");
+            System.out.println("Ваши координаты - " + ChoseField(player, RandomGenerateUnit()).getCoordinats() + "\n", gameobject);
 
             //показать ии карту и спросить куда он ее ставит
             Player intellect = gameObject.getPlayer(1);
@@ -50,17 +51,17 @@ public class Main {
         SetRandomUnitonField(player, 2, 0, -2);
 
         //Для ИИ
-        SetRandomUnitonField(intellect, 0, -2,2);
+        /*SetRandomUnitonField(intellect, 0, -2,2);
         SetRandomUnitonField(intellect, 1, -2, 1);
-        SetRandomUnitonField(intellect, -1, -1, 2);
+        SetRandomUnitonField(intellect, -1, -1, 2);*/
         SetRandomUnitonField(intellect, 0, -1, 1);
-        SetRandomUnitonField(intellect, 2, -2, 0);
-        SetRandomUnitonField(intellect, -2, 0, 2);
+        /*SetRandomUnitonField(intellect, 2, -2, 0);
+        SetRandomUnitonField(intellect, -2, 0, 2);*/
 
         System.out.println("Игра началась");
 
-        System.out.println(gameObject.Step(gameObject.FindField(-2,2,0), gameObject.FindField(-2, 1,1),
-                gameObject.FindField(-2, 0, 2), Ability.ATTACK, 0));
+       /* System.out.println(gameObject.Step(gameObject.FindField(-2,2,0), gameObject.FindField(-2, 1,1),
+                gameObject.FindField(-2, 0, 2), Ability.ATTACK, 0));*/
 
         //я даю поле откуда, поле куда походили, gameobject
         //задача ии - взять все возможные дейтсвия юнита, пройтись по всем, скопировать gameobject для каждого дейтсвия,
@@ -74,7 +75,7 @@ public class Main {
     private static void SetRandomUnitonField (Player player, int x, int y, int z)
     {
         Unit unit = RandomGenerateUnit();
-        gameObject.AddCardtoPlayeronFiels(player.getNumber(),unit, gameObject.FindField(x, y, z));
+        Main.gameObject.AddCardtoPlayeronFiels(player.getNumber(),unit, gameObject.FindField(x, y, z));
     }
 
     private static Field ChoseField(Player player, Unit unit) {

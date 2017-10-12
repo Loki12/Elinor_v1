@@ -1,5 +1,6 @@
 package com.sergejninzyy.Models;
 
+import com.sergejninzyy.GameObject;
 import com.sergejninzyy.Main;
 import com.sergejninzyy.Models.Cards.Ability;
 import com.sergejninzyy.Models.Cards.Unit;
@@ -54,18 +55,39 @@ public class Field {
     {
         ArrayList<Field> result = new ArrayList<>();
 
-        for (int i=-N; i<=N; i++)
+        /*for (int i=-N; i<=N; i++)
         {
             int max = -N>-i-N ? -N:-i-N;
             int min = N < -i+N ? N: -i+N;
             for (int j = max; j<=min; j++)
             {
-                z=-i-j;
-                Field field = Main.gameObject.FindField(i, j, z);
+                int k=-i-j;
+                Field field = Main.gameObject.FindField(i, j, k);
                 if(field!=null && field!=this)
                 {
-                    System.out.println(i + " " + j + " " + z);
+                    System.out.println(i + " " + j + " " + k);
                     result.add(field);
+                }
+            }
+        }*/
+
+        if (N==1){
+            result.add(Main.gameObject.FindField(x-1, y, z+1));
+            result.add(Main.gameObject.FindField(x-1, y+1, z));
+            result.add(Main.gameObject.FindField(x, y-1, z+1));
+            result.add(Main.gameObject.FindField(x, y+1, z-1));
+            result.add(Main.gameObject.FindField(x+1, y-1, z));
+            result.add(Main.gameObject.FindField(x+1, y, z-1));
+        }
+        else{
+            for (int i=x-N; i>=x+N; i++){
+                for (int j=y-N; j>=y+N; j++){
+                    for (int k=z-N; k>=z+N; k++){
+                        if (i+j+k==0)
+                        {
+                            result.add(Main.gameObject.FindField(i, j, k));
+                        }
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 package com.sergejninzyy.Models;
 
+import com.sergejninzyy.GameObject;
 import com.sergejninzyy.Models.Cards.Unit;
 
 import java.util.ArrayList;
@@ -15,17 +16,23 @@ public class Player {
         this.number = i;
     }
 
-    public Player copyPlayer()
+    //todo решить эту огромную проблему - когда я копикую поля внутри player - я создаю копию и они уже не являются ссылками на те поля, что у нас есть в gameobject
+
+    //нужно брать поле у настоящего player и искать такое же поле среди копий и помещать в массив к копии player
+    //
+    public Player copyPlayer(GameObject gameObjectClone)
     {
         Player player = new Player(this.number);
-        ArrayList<Field> fieldArrayList = new ArrayList<>();
         for (Field f: this.getPlayersfields()) {
-            fieldArrayList.add(f.copyField());
+            player.getPlayersfields().add(gameObjectClone.FindField(f.getX(), f.getY(), f.getZ()));
         }
 
-        ArrayList<Unit> unitsArrayList = new ArrayList<>();
-        for (Unit u: this.dead_units) {
-            unitsArrayList.add(u.copyUnit());
+        /*for (Field real_field: this.getPlayersfields()) {
+            player.getPlayersfields().add(real_field.copyField());
+        }*/
+
+        for (Unit real_unit: this.dead_units) {
+            player.dead_units.add(real_unit.copyUnit());
         }
         return player;
     }

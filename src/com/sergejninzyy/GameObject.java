@@ -34,13 +34,18 @@ public class GameObject {
 
     public GameObject gameObjectClone ()
     {
-        GameObject gameObject = new GameObject(this.lvl);
 
-        ArrayList<Player> new_players = new ArrayList<>();
+        GameObject gameObjectClone = new GameObject(this.lvl);
+        for (int i = 0; i < this.players.size(); i++) {
+            Player player = gameObjectClone.getPlayer(i);
+            player = this.getPlayer(i).copyPlayer(gameObjectClone);
+        }
+
+        /*ArrayList<Player> new_players = new ArrayList<>();
         for (Player p: this.players) {
             new_players.add(p.copyPlayer());
-        }
-        return gameObject;
+        }*/
+        return gameObjectClone;
     }
 
     private void FillPlayers() {
