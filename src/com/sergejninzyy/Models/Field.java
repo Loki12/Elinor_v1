@@ -34,9 +34,12 @@ public class Field {
 
     public Field copyField()
     {
-        Unit unit = this.unit.copyUnit();
-        Field field = new Field(this.x, this.y, this.z, unit);
-        return  field;
+        Unit unit = null;
+        if (this.unit !=null)
+        {
+            unit = this.unit.copyUnit();
+        }
+        return new Field(this.x, this.y, this.z, unit);
     }
 
     public Unit getUnit() {
@@ -50,35 +53,22 @@ public class Field {
     public ArrayList<Field> GetNeighbours(int N)
     {
         ArrayList<Field> result = new ArrayList<>();
-      /*for (int dx=-N; dx<=N; dx++)
+
+        for (int i=-N; i<=N; i++)
         {
-            int max = -N>=-dx-N? -N :-dx-N;
-            int min = N>=-dx+N? N :-dx+N;
-            for (int dy = max; dy<=min; dy++)
+            int max = -N>-i-N ? -N:-i-N;
+            int min = N < -i+N ? N: -i+N;
+            for (int j = max; j<=min; j++)
             {
-                int dz = -dx-dy;
-                result.add(Main.gameObject.FindField(this.getX()+dx, this.getY()+dy, this.getZ()+dz));
-            }
-        }*/
-        for (int i = -N; i <=N ; i++) {
-            for (int j = -N; j <=N ; j++) {
-                for (int k = -N; k <=N; k++) {
-                    int newx = this.x+i;
-                    int newy = this.y+j;
-                    int newz = this.z+k;
-                    if(newx + newy + newz ==0)
-                    {
-                        Field field = Main.gameObject.FindField(newx, newy, newz);
-                        if(field!=null && field!=this)
-                        {
-                            result.add(field);
-                        }
-                    }
+                z=-i-j;
+                Field field = Main.gameObject.FindField(i, j, z);
+                if(field!=null && field!=this)
+                {
+                    System.out.println(i + " " + j + " " + z);
+                    result.add(field);
                 }
             }
         }
-        //сделать нормально
-        
         return result;
     }
 
@@ -123,10 +113,13 @@ public class Field {
 
     private Collection<? extends Field> find_aims_to_attack(Player player) {
         ArrayList<Field> result = new ArrayList<>();
-
-        result.addAll(this.GetNeighbours(1));
-        for (Field f: result) {
-            if(f.getUnit()==null || f.whosfield() == player || f.getUnit().animal) result.remove(f);
+        ArrayList<Field> curr = new ArrayList<>();
+        curr.addAll(this.GetNeighbours(1));
+        for (Field f: curr) {
+            if(f.getUnit()==null || f.whosfield() == player || f.getUnit().animal) {
+                //do nothing
+            }
+            else result.add(f);
         }
         return result;
     }

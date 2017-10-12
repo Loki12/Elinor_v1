@@ -16,13 +16,16 @@ public class GameObject {
 
     public ArrayList<Player> players;
     public ArrayList<Field> fields;
+    public int lvl;
 
-    public GameObject(){
+    public GameObject( int lvl){
+
+        this.lvl = lvl;
         fields = new ArrayList<>();
         players = new ArrayList<>();
 
         try {
-            FillFields(2);
+            FillFields(this.lvl);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -31,7 +34,7 @@ public class GameObject {
 
     public GameObject gameObjectClone ()
     {
-        GameObject gameObject = new GameObject();
+        GameObject gameObject = new GameObject(this.lvl);
 
         ArrayList<Player> new_players = new ArrayList<>();
         for (Player p: this.players) {
@@ -96,6 +99,13 @@ public class GameObject {
         return null;
     }
 
+    public Integer Step(Field field_old, Field new_field, Field aim_of_ability, Ability ability, Integer eff)
+    {
+        ChangeFieldofcard(field_old, new_field);
+        Pair<GameObject, Integer> pair = Action(ability, new_field, aim_of_ability, eff);
+        return pair.getValue();
+    }
+
     public void ChangeFieldofcard(Field old_field, Field new_field)
     {
         new_field.setUnit(old_field.getUnit());
@@ -127,24 +137,45 @@ public class GameObject {
     //TODO check
     public int attack(Field f1, Field f2)
     {
-            f2.getUnit().setHits(f2.getUnit().getHits()-f1.getUnit().getAttack());
-            if (f2.getUnit().getHits()<1)
-            {
+            f2.getUnit().setHits(f2.getUnit().getHits() - f1.getUnit().getAttack());
+            if (f2.getUnit().getHits() < 1) {
                 f2.whosfield().dead_units.add(f2.getUnit());
                 f2.setUnit(null);
+                f2.whosfield().getPlayersfields().remove(f2);
                 return 2;
-            }
-            else return 1;
+            } else return 1;
+
     }
 
     //Todo доедлать остальные способности
     //возвращает состояние всего поля и оценку эффективности
-    public Pair<GameObject, Integer> Action(Ability ability, Field unitfield, Field aimofability, Integer eff) {
-
+    public Pair<GameObject, Integer> Action(Ability ability, Field my_unit_field, Field aim_of_ability, Integer eff) {
         Integer mark = eff;
         if (ability == Ability.ATTACK) {
-           mark = this.attack(unitfield, aimofability);
+           mark = this.attack(my_unit_field, aim_of_ability);
         }
         return new Pair<>(this, mark);
     }
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //я даю поле откуда, поле куда походили, gameobject
+    //задача ии - взять все возможные дейтсвия юнита, пройтись по всем, скопировать gameobject для каждого дейтсвия,
+    // сделать ход и дейтвие, вернуть пару gameobject unteger
+
+  /*  public Integer find_actions(Field old_field, Field new_field, Integer eff)
+    {
+        ArrayList<Integer> integerArrayList = new ArrayList<>();
+        integerArrayList.add(eff);
+        Integer sum = eff;
+        ArrayList<Ability> abilities = old_field.getUnit().getAbilities();
+        for (Ability ab: abilities) {
+            ArrayList<Field> arrayListaimofabilities = old_field.getAimofAbility(ab, old_field.whosfield());
+            for (Field aimofability: arrayListaimofabilities) {
+                Integer mark = gameObjectClone().Step(old_field, new_field, aimofability, ab, eff);
+                integerArrayList.add(mark);
+                sum+=mark;
+            }
+        }
+        return sum/integerArrayList.size();
+    }*/
 }

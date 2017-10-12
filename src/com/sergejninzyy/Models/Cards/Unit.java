@@ -11,6 +11,7 @@ public class Unit {
     public boolean animal;
 
     public Unit(Narod narod) {
+        this.hits = 1;
         this.narod = narod;
     }
 
