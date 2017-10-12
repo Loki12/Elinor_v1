@@ -1,11 +1,10 @@
 package com.sergejninzyy.Models;
 import com.sergejninzyy.GameObject;
+import com.sergejninzyy.Main;
 import com.sergejninzyy.Models.Cards.Narod;
 import com.sergejninzyy.Models.Cards.Unit;
 
 import java.util.*;
-
-import static com.sergejninzyy.Main.gameObject;
 
 public class Intellect extends Player {
 
@@ -16,13 +15,13 @@ public class Intellect extends Player {
     }
 
 
-    public Field AlignmentSet (Unit unit, int num_of_step)
+    public Field AlignmentSet (GameObject gameObject, Unit unit, int num_of_step)
     {
 
         if (num_of_step == 0) {
             //возвращаем шестиугольник на противоположной стороне
-            Field first_step = gameObject.getPlayer(0).getPlayersfields().get(0);
-            return gameObject.FindField(-first_step.getX(), -first_step.getY(), -first_step.getZ());
+            Field first_step = Main.gameObject.getPlayer(0).getPlayersfields().get(0);
+            return Main.gameObject.FindField(-first_step.getX(), -first_step.getY(), -first_step.getZ());
             }
             else {
                 if (num_of_step == 20)
@@ -32,9 +31,9 @@ public class Intellect extends Player {
                 else {
 
                     // итого у нас те клетки, на которые мы можем ходить
-                List<Field> list1 = FreeOurFields();
+                List<Field> list1 = FreeOurFields(gameObject);
                 //для каждой этой клетки нужно посчитать расстояние до ближайшей клетки противника
-                SortedMap<Integer, Field> listmap = CountDistance(list1, gameObject);
+                SortedMap<Integer, Field> listmap = CountDistance(list1, Main.gameObject);
 
                     if (unit.narod == Narod.CHEKATTA|| unit.narod==Narod.ULUTAU) {
                         //если чекатта или улутау - ставим на максимально возможном расстоянии
@@ -105,7 +104,7 @@ public class Intellect extends Player {
 
     //ищем клетки, на которые можем поставить следующую карту
 
-    public List<Field> FreeOurFields()
+    public List<Field> FreeOurFields(GameObject gameObject)
     {
         ////что делать, если это не первый и не последний ход
             //вычисляем на какие мы можем ходит
@@ -115,7 +114,7 @@ public class Intellect extends Player {
         //берем соседние
         ArrayList<Field> result = new ArrayList<>();
         for (Field f: this.getPlayersfields()) {
-            result.addAll(f.GetNeighbours(1));
+            result.addAll(f.GetNeighbours(1, gameObject));
         }
         //убираем свои поля
         result.removeAll(this.getPlayersfields());
@@ -124,7 +123,7 @@ public class Intellect extends Player {
         HashSet<Field> sort_arr = new HashSet<>(result);
 
         //отбрасываем занятые
-        for (Field f: gameObject.getPlayer(0).getPlayersfields())
+        for (Field f: Main.gameObject.getPlayer(0).getPlayersfields())
         {
             if (sort_arr.contains(f))
             {

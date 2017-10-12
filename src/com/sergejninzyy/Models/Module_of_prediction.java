@@ -101,10 +101,10 @@ public class Module_of_prediction {
         for (Pair<GameObject, Field> pair : possible_steps) {
             ArrayList<Ability> abilities = pair.getValue().getUnit().getAbilities();
             for (Ability ability : abilities) {
-                ArrayList<Field> aimofability = pair.getValue().getAimofAbility(ability, pair.getValue().whosfield());
+                ArrayList<Field> aimofability = pair.getValue().getAimofAbility(ability, pair.getValue().whosfield(gameObject), gameObject);
                 for (Field field : aimofability) {
                     GameObject gameObjectClone = gameObject.gameObjectClone();
-                    possible_actions.add(gameObjectClone.Action(ability, pair.getValue(), field, eff));
+                    possible_actions.add(gameObjectClone.Action(gameObject, ability, pair.getValue(), field, eff));
                 }
             }
         }
@@ -120,9 +120,9 @@ public class Module_of_prediction {
         //находим всех соседей данного поля
         if (old_field.getUnit().getSteps() == 2) {
             //TODO исправить ходы у гуавара
-            result = old_field.GetNeighbours(2);
-            result.removeAll(old_field.GetNeighbours(1));
-        } else result = old_field.GetNeighbours(1);
+            result = old_field.GetNeighbours(2, gameObject);
+            result.removeAll(old_field.GetNeighbours(1, gameObject));
+        } else result = old_field.GetNeighbours(1, gameObject);
 
         //оставляем только незанятые клетки
         ArrayList<Field> free_fields = new ArrayList<>();

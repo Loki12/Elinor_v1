@@ -104,10 +104,10 @@ public class GameObject {
         return null;
     }
 
-    public Integer Step(Field field_old, Field new_field, Field aim_of_ability, Ability ability, Integer eff)
+    public Integer Step(GameObject gameObject, Field field_old, Field new_field, Field aim_of_ability, Ability ability, Integer eff)
     {
         ChangeFieldofcard(field_old, new_field);
-        Pair<GameObject, Integer> pair = Action(ability, new_field, aim_of_ability, eff);
+        Pair<GameObject, Integer> pair = Action(gameObject, ability, new_field, aim_of_ability, eff);
         return pair.getValue();
     }
 
@@ -140,13 +140,13 @@ public class GameObject {
 
 
     //TODO check
-    public int attack(Field f1, Field f2)
+    public int attack(Field f1, Field f2, GameObject gameObject)
     {
             f2.getUnit().setHits(f2.getUnit().getHits() - f1.getUnit().getAttack());
             if (f2.getUnit().getHits() < 1) {
-                f2.whosfield().dead_units.add(f2.getUnit());
+                f2.whosfield(gameObject).dead_units.add(f2.getUnit());
                 f2.setUnit(null);
-                f2.whosfield().getPlayersfields().remove(f2);
+                f2.whosfield(gameObject).getPlayersfields().remove(f2);
                 return 2;
             } else return 1;
 
@@ -154,10 +154,10 @@ public class GameObject {
 
     //Todo доедлать остальные способности
     //возвращает состояние всего поля и оценку эффективности
-    public Pair<GameObject, Integer> Action(Ability ability, Field my_unit_field, Field aim_of_ability, Integer eff) {
+    public Pair<GameObject, Integer> Action(GameObject gameObject, Ability ability, Field my_unit_field, Field aim_of_ability, Integer eff) {
         Integer mark = eff;
         if (ability == Ability.ATTACK) {
-           mark = this.attack(my_unit_field, aim_of_ability);
+           mark = this.attack(my_unit_field, aim_of_ability, gameObject);
         }
         return new Pair<>(this, mark);
     }

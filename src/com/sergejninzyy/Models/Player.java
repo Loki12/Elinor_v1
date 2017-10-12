@@ -16,8 +16,6 @@ public class Player {
         this.number = i;
     }
 
-    //todo решить эту огромную проблему - когда я копикую поля внутри player - я создаю копию и они уже не являются ссылками на те поля, что у нас есть в gameobject
-
     //нужно брать поле у настоящего player и искать такое же поле среди копий и помещать в массив к копии player
     //
     public Player copyPlayer(GameObject gameObjectClone)
@@ -26,10 +24,6 @@ public class Player {
         for (Field f: this.getPlayersfields()) {
             player.getPlayersfields().add(gameObjectClone.FindField(f.getX(), f.getY(), f.getZ()));
         }
-
-        /*for (Field real_field: this.getPlayersfields()) {
-            player.getPlayersfields().add(real_field.copyField());
-        }*/
 
         for (Unit real_unit: this.dead_units) {
             player.dead_units.add(real_unit.copyUnit());

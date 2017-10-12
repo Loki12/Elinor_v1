@@ -25,9 +25,9 @@ public class Field {
         this.unit = unit;
     }
 
-    public Player whosfield()
+    public Player whosfield(GameObject gameObject)
     {
-        for (Player p: Main.gameObject.players) {
+        for (Player p: gameObject.players) {
             if (p.getPlayersfields().contains(this)) return p;
         }
         return null;
@@ -51,7 +51,7 @@ public class Field {
         this.unit = unit;
     }
 
-    public ArrayList<Field> GetNeighbours(int N)
+    public ArrayList<Field> GetNeighbours(int N, GameObject gameObject)
     {
         ArrayList<Field> result = new ArrayList<>();
 
@@ -125,20 +125,20 @@ public class Field {
 
 
     //TODO дописать остальные способоности
-    public ArrayList<Field> getAimofAbility(Ability ability, Player player) {
+    public ArrayList<Field> getAimofAbility(Ability ability, Player player, GameObject gameObject) {
         ArrayList<Field> result = new ArrayList<>();
         if (ability == Ability.TOVEDICH|| ability == Ability.TOANIMAL) result.add(this);
-        if (ability == Ability.ATTACK||ability == Ability.STAN) result.addAll(this.find_aims_to_attack(player));
+        if (ability == Ability.ATTACK||ability == Ability.STAN) result.addAll(this.find_aims_to_attack(player, gameObject));
 
         return result;
     }
 
-    private Collection<? extends Field> find_aims_to_attack(Player player) {
+    private Collection<? extends Field> find_aims_to_attack(Player player, GameObject gameObject) {
         ArrayList<Field> result = new ArrayList<>();
         ArrayList<Field> curr = new ArrayList<>();
-        curr.addAll(this.GetNeighbours(1));
+        curr.addAll(this.GetNeighbours(1, gameObject));
         for (Field f: curr) {
-            if(f.getUnit()==null || f.whosfield() == player || f.getUnit().animal) {
+            if(f.getUnit()==null || f.whosfield(gameObject) == player || f.getUnit().animal) {
                 //do nothing
             }
             else result.add(f);
