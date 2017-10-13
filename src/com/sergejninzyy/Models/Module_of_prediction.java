@@ -41,18 +41,16 @@ public class Module_of_prediction {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }*/
 
-
-
         ArrayList<Pair<GameObject, Integer>> res = new ArrayList<>();
 
         //для каждого состояния к которому мы можем прийти за наш ход, мы считаем эффективность на несколько ходов вперед
         for (Pair<GameObject, Integer> gameObjectIntegerPair : first_steps_effective) {
-            Pair<GameObject, Integer> localpair = count_effective(gameObjectIntegerPair.getKey(), depth, gameObjectIntegerPair.getValue());
-            res.add(localpair);
+            Pair<GameObject, Integer> local_pair = count_effective(gameObjectIntegerPair.getKey(), depth, gameObjectIntegerPair.getValue());
+            res.add(local_pair);
         }
         // итого, в переменной res мы получаем значение пар состояний к которым мы можем прийти за один ход и эффективность этих ходов на нужную нам глубину
 
-        //здесь мы должны выбрать один единственный Gameobjectб который по сути и будет нашим ходом
+        //здесь мы должны выбрать один единственный Gameobject который по сути и будет нашим ходом
         Pair<GameObject, Integer> max = new Pair<>(gameObject, 0);
         for (Pair<GameObject, Integer> pair : res) {
             if (max.getValue() < pair.getValue()) {
