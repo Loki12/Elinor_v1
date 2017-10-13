@@ -21,8 +21,27 @@ public class Module_of_prediction {
         //список возможных состояний после моего хода и их эффективность
         ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, 0, gameObject.getPlayer(1));
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //хочу увидеть список первых ходов с оценкой их эффективности
+        double proverka = 32.0;
+        //вот до сюда все нормально
+
+        //сделаем масштабную проверку
+
+        /*for (Pair<GameObject, Integer> pair: first_steps_effective) {
+            System.out.println("Состояние номер " + pair.getKey().toString() + "Эффективность этого состояния = " + pair.getValue());
+
+            System.out.println("Игрок номер 0 и список его полей");
+            for (Field field: pair.getKey().players.get(0).getPlayersfields()) {
+                System.out.println(field.getCoordinats());
+            }
+
+            System.out.println("ИИ и список его полей");
+            for (Field field: pair.getKey().players.get(1).getPlayersfields()) {
+                System.out.println(field.getCoordinats());
+            }
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }*/
+
+
 
         ArrayList<Pair<GameObject, Integer>> res = new ArrayList<>();
 
@@ -82,7 +101,7 @@ public class Module_of_prediction {
         //для каждого варианта действий создаем свой gameobject
 
         //список пар состояний после хода и поле, на которое мы сейчас походили
-        ArrayList<Pair<GameObject, Field>> possible_steps = new ArrayList<>();
+        ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps = new ArrayList<>();
         for (Field f : player.getPlayersfields()) {
             possible_steps.addAll(possible_steps(f, gameObject));
         }
@@ -90,21 +109,38 @@ public class Module_of_prediction {
         //!!!!!!!!!
         //список первых ходов
 
-        System.out.println("Список первых ходов");
-        for (Pair<GameObject, Field> pair: possible_steps) {
-            System.out.println(pair.getValue().getCoordinats());
+        System.out.println("Список первых возможных ходов");
+        for (Pair<Pair<GameObject, Field>, Field> pair: possible_steps) {
+            System.out.println(pair.getKey().getValue().getCoordinats());
         }
 
 
         //список состояний доcки после хода и действия
         ArrayList<Pair<GameObject, Integer>> possible_actions = new ArrayList<>();
-        for (Pair<GameObject, Field> pair : possible_steps) {
-            ArrayList<Ability> abilities = pair.getValue().getUnit().getAbilities();
+
+        //для каждого из возможных ходов
+        for (Pair<Pair<GameObject, Field>, Field> pair : possible_steps) {
+            //мы находим способности этого юнита, исходя из поля, на которое мы уже походили
+            ArrayList<Ability> abilities = pair.getKey().getValue().getUnit().getAbilities();
+            //для каждой способности
             for (Ability ability : abilities) {
-                ArrayList<Field> aimofability = pair.getValue().getAimofAbility(ability, pair.getValue().whosfield(gameObject), gameObject);
+                //мы находим цели этой способности, с учетом поля на которое мы уже походили
+                ArrayList<Field> aimofability = pair.getKey().getValue().getAimofAbility(ability, pair.getValue().whosfield(gameObject), gameObject);
+
+                //если нет целей для способности
+                if (aimofability.size() == 0)
+                {
+                    possible_actions.add(new Pair<>(pair.getKey().getKey(), eff));
+                }
+
+                //для каждого поля, на которое у нас направлена способность
                 for (Field field : aimofability) {
-                    GameObject gameObjectClone = gameObject.gameObjectClone();
-                    possible_actions.add(gameObjectClone.Action(gameObject, ability, pair.getValue(), field, eff));
+                    GameObject gameObjectClone = pair.getKey().getKey().gameObjectClone();
+                    Field copy_new_field_aim_for_attack = gameObjectClone.FindField(field.getX(), field.getY(), field.getZ());
+                    //получаем копию нашего поля в копии gameobject
+                    Field curr = pair.getKey().getValue();
+                    Field copy_old_field = gameObjectClone.FindField(curr.getX(), curr.getY(), curr.getZ());
+                    possible_actions.add(gameObjectClone.Action(ability, copy_old_field, copy_new_field_aim_for_attack, eff));
                 }
             }
         }
@@ -112,9 +148,9 @@ public class Module_of_prediction {
         return possible_actions;
     }
 
-    private ArrayList<Pair<GameObject, Field>> possible_steps(Field old_field, GameObject gameObject) {
+    private ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps(Field old_field, GameObject gameObject) {
 
-        ArrayList<Pair<GameObject, Field>> common_result = new ArrayList<>();
+        ArrayList<Pair<Pair<GameObject, Field>, Field>> common_result = new ArrayList<>();
         ArrayList<Field> result;
 
         //находим всех соседей данного поля
@@ -135,8 +171,15 @@ public class Module_of_prediction {
         //создаем клона gameobject для каждого варианта хода, ходим на каждом клоне и записываем изменненые клоны поля и поля в массив
         for (Field new_field: free_fields) {
             GameObject gameObjectClone = gameObject.gameObjectClone();
-            gameObjectClone.ChangeFieldofcard(old_field, new_field);
-            common_result.add(new Pair<>(gameObjectClone, new_field));
+            Field copy_old_field = gameObjectClone.FindField(old_field.getX(), old_field.getY(), old_field.getZ());
+            Field copy_new_field = gameObjectClone.FindField(new_field.getX(), new_field.getY(), new_field.getZ());
+            gameObjectClone.ChangeFieldofcard(copy_old_field, copy_new_field);
+
+            //todo внимательно посмотреть и понять, нужно ли передавать копию или реальность
+            //new_field = gameObject.FindField(new_field.getX(), new_field.getY(), new_field.getZ());
+            Pair<GameObject, Field> curr_pair = new Pair<>(gameObjectClone, copy_new_field);
+
+            common_result.add(new Pair<>(curr_pair, old_field));
         }
 
         return common_result;

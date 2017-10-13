@@ -2,20 +2,18 @@ package com.sergejninzyy;
 
 import com.sergejninzyy.Models.Cards.Narod;
 import com.sergejninzyy.Models.Cards.Unit;
-import com.sergejninzyy.Models.Field;
 import com.sergejninzyy.Models.Module_of_prediction;
 import com.sergejninzyy.Models.Player;
 
 import java.io.*;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Main {
 
     private static final int LVL = 2;
-    public static GameObject gameObject = new GameObject(LVL);
-    Player player = gameObject.getPlayer(0);
-    Player intellect = gameObject.getPlayer(1);
+    //public static GameObject gameObject = new GameObject(LVL);
+    //Player player = gameObject.getPlayer(0);
+    //Player intellect = gameObject.getPlayer(1);
 
     public static void main(String[] args) throws IOException {
 
@@ -43,18 +41,21 @@ public class Main {
         }*/
       //Test Game
         //Для игрока
-        SetRandomUnitonField(player, 0, 2,-2);
-        SetRandomUnitonField(player, -1, 2, -1);
-        SetRandomUnitonField(player, 1, 1, -2);
-        SetRandomUnitonField(player, 0, 1, -1);
-        SetRandomUnitonField(player, -2, 2, 0);
-        SetRandomUnitonField(player, 2, 0, -2);
+        SetRandomUnitonField(player, 0, 2,-2, gameObject);
+        SetRandomUnitonField(player, -1, 2, -1, gameObject);
+        SetRandomUnitonField(player, 1, 1, -2, gameObject);
+        SetRandomUnitonField(player, 0, 1, -1, gameObject);
+        SetRandomUnitonField(player, -2, 2, 0, gameObject);
+        SetRandomUnitonField(player, 2, 0, -2, gameObject);
 
         //Для ИИ
         /*SetRandomUnitonField(intellect, 0, -2,2);
         SetRandomUnitonField(intellect, 1, -2, 1);
         SetRandomUnitonField(intellect, -1, -1, 2);*/
-        SetRandomUnitonField(intellect, 0, -1, 1);
+
+        Unit ito = new Unit(Narod.ITOSHIN);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),ito, gameObject.FindField(0, 0, 0));
+        //SetRandomUnitonField(intellect, 0, -1, 1, gameObject);
         /*SetRandomUnitonField(intellect, 2, -2, 0);
         SetRandomUnitonField(intellect, -2, 0, 2);*/
 
@@ -72,13 +73,13 @@ public class Main {
         GameObject new_gameObject = module_of_prediction.predict(gameObject, 1, 1);
     }
 
-    private static void SetRandomUnitonField (Player player, int x, int y, int z)
+    private static void SetRandomUnitonField (Player player, int x, int y, int z, GameObject gameObject)
     {
         Unit unit = RandomGenerateUnit();
-        Main.gameObject.AddCardtoPlayeronFiels(player.getNumber(),unit, gameObject.FindField(x, y, z));
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(),unit, gameObject.FindField(x, y, z));
     }
 
-    private static Field ChoseField(Player player, Unit unit) {
+  /*  private static Field ChoseField(Player player, Unit unit) {
         //Показать игроку карту
         System.out.println(unit.narod);
 
@@ -94,17 +95,17 @@ public class Main {
         gameObject.AddCardtoPlayeronFiels(0, unit, field);
         return field;
     }
-
+*/
     private static Unit RandomGenerateUnit()
     {
         return new Unit(Narod.values()[new Random().nextInt(Narod.values().length)]);
     }
 
-    private static Unit RandomGenerateUnitreturn(Unit unit)
+  /*  private static Unit RandomGenerateUnitreturn(Unit unit)
     {
         return new Unit(Narod.values()[new Random().nextInt(Narod.values().length)]);
     }
-
+*/
 
 
 }

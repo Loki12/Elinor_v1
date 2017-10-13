@@ -65,12 +65,12 @@ public class Unit {
     public ArrayList<Ability> getAbilities() {
         ArrayList<Ability> result = new ArrayList<>();
 
-        if (this.narod!=Narod.CHEKATTA && this.narod!=Narod.ULUTAU) result.add(Ability.ATTACK);
+        if (this.narod!=Narod.CHEKATTA && this.narod!=Narod.ULUTAU && this.narod!=Narod.MECHNIC) result.add(Ability.ATTACK);
         if (this.narod==Narod.DJUNIT ) result.add(Ability.DOUBLE_ATTACK);
-        if (this.narod!=Narod.CHEKATTA) result.add(Ability.COMEBACK_CHEKATTA);
-        if (this.narod!=Narod.ULUTAU) { result.add(Ability.HEAL); result.add(Ability.STAN);}
-        if (this.narod!=Narod.VEDICH) { result.add(Ability.TOANIMAL); result.add(Ability.TOVEDICH);}
-        if (this.narod!=Narod.MECHNIC) result.add(Ability.FIRE_ARROW);
+        if (this.narod==Narod.CHEKATTA) result.add(Ability.COMEBACK_CHEKATTA);
+        if (this.narod==Narod.ULUTAU) { result.add(Ability.HEAL); result.add(Ability.STAN);}
+        if (this.narod==Narod.VEDICH) { result.add(Ability.TOANIMAL); result.add(Ability.TOVEDICH);}
+        if (this.narod==Narod.MECHNIC) result.add(Ability.FIRE_ARROW);
 
         return result;
     }

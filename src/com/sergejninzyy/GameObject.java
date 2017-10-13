@@ -34,11 +34,17 @@ public class GameObject {
 
     public GameObject gameObjectClone ()
     {
-
+//todo проследить - очень странная штука...
         GameObject gameObjectClone = new GameObject(this.lvl);
-        for (int i = 0; i < this.players.size(); i++) {
-            Player player = gameObjectClone.getPlayer(i);
-            player = this.getPlayer(i).copyPlayer(gameObjectClone);
+
+        gameObjectClone.fields.clear();
+        for (Field real_field:this.fields) {
+            gameObjectClone.fields.add(real_field.copyField());
+        }
+
+        gameObjectClone.players.clear();
+        for (Player real_player:this.players) {
+            gameObjectClone.players.add(real_player.copyPlayer(gameObjectClone));
         }
 
         /*ArrayList<Player> new_players = new ArrayList<>();
@@ -95,7 +101,7 @@ public class GameObject {
 
     public Field FindField (int x, int y, int z)
     {
-        for (Field f: fields) {
+        for (Field f: this.fields) {
             if (f.getX() == x && f.getY() == y && f.getZ() == z)
             {
                 return f;
@@ -104,17 +110,23 @@ public class GameObject {
         return null;
     }
 
-    public Integer Step(GameObject gameObject, Field field_old, Field new_field, Field aim_of_ability, Ability ability, Integer eff)
+    public Integer Step(Field field_old, Field new_field, Field aim_of_ability, Ability ability, Integer eff)
     {
         ChangeFieldofcard(field_old, new_field);
-        Pair<GameObject, Integer> pair = Action(gameObject, ability, new_field, aim_of_ability, eff);
+        Pair<GameObject, Integer> pair = Action( ability, new_field, aim_of_ability, eff);
         return pair.getValue();
     }
 
     public void ChangeFieldofcard(Field old_field, Field new_field)
     {
+        //берешь юнит, ставишь на новое поле
+        //удаляешь со старого поля юнит
+        //удаляешь поле из пула игрока
+        //добавляешь в пул игрока новое поле
         new_field.setUnit(old_field.getUnit());
         old_field.setUnit(null);
+        old_field.whosfield(this).getPlayersfields().add(new_field);
+        old_field.whosfield(this).getPlayersfields().remove(old_field);
     }
 
     public void ChangeFieldofcard(Unit unit, Field new_field)
@@ -154,10 +166,10 @@ public class GameObject {
 
     //Todo доедлать остальные способности
     //возвращает состояние всего поля и оценку эффективности
-    public Pair<GameObject, Integer> Action(GameObject gameObject, Ability ability, Field my_unit_field, Field aim_of_ability, Integer eff) {
+    public Pair<GameObject, Integer> Action(Ability ability, Field my_unit_field, Field aim_of_ability, Integer eff) {
         Integer mark = eff;
         if (ability == Ability.ATTACK) {
-           mark = this.attack(my_unit_field, aim_of_ability, gameObject);
+           mark = this.attack(my_unit_field, aim_of_ability, this);
         }
         return new Pair<>(this, mark);
     }

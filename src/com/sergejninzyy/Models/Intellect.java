@@ -20,8 +20,8 @@ public class Intellect extends Player {
 
         if (num_of_step == 0) {
             //возвращаем шестиугольник на противоположной стороне
-            Field first_step = Main.gameObject.getPlayer(0).getPlayersfields().get(0);
-            return Main.gameObject.FindField(-first_step.getX(), -first_step.getY(), -first_step.getZ());
+            Field first_step = gameObject.getPlayer(0).getPlayersfields().get(0);
+            return gameObject.FindField(-first_step.getX(), -first_step.getY(), -first_step.getZ());
             }
             else {
                 if (num_of_step == 20)
@@ -33,7 +33,7 @@ public class Intellect extends Player {
                     // итого у нас те клетки, на которые мы можем ходить
                 List<Field> list1 = FreeOurFields(gameObject);
                 //для каждой этой клетки нужно посчитать расстояние до ближайшей клетки противника
-                SortedMap<Integer, Field> listmap = CountDistance(list1, Main.gameObject);
+                SortedMap<Integer, Field> listmap = CountDistance(list1, gameObject);
 
                     if (unit.narod == Narod.CHEKATTA|| unit.narod==Narod.ULUTAU) {
                         //если чекатта или улутау - ставим на максимально возможном расстоянии
@@ -123,7 +123,7 @@ public class Intellect extends Player {
         HashSet<Field> sort_arr = new HashSet<>(result);
 
         //отбрасываем занятые
-        for (Field f: Main.gameObject.getPlayer(0).getPlayersfields())
+        for (Field f: gameObject.getPlayer(0).getPlayersfields())
         {
             if (sort_arr.contains(f))
             {
@@ -158,7 +158,7 @@ public class Intellect extends Player {
 
         //отбрасываем занятые
         for (Field f: sort_arr) {
-            if (Main.gameObject.getPlayer(0).getPlayersfields().contains(f))
+            if (gameObject.getPlayer(0).getPlayersfields().contains(f))
             {
                 sort_arr.remove(f);
             }

@@ -1,7 +1,6 @@
 package com.sergejninzyy.Models;
 
 import com.sergejninzyy.GameObject;
-import com.sergejninzyy.Main;
 import com.sergejninzyy.Models.Cards.Ability;
 import com.sergejninzyy.Models.Cards.Unit;
 
@@ -62,7 +61,7 @@ public class Field {
             for (int j = max; j<=min; j++)
             {
                 int k=-i-j;
-                Field field = Main.gameObject.FindField(i, j, k);
+                Field field = gameObject.FindField(i, j, k);
                 if(field!=null && field!=this)
                 {
                     System.out.println(i + " " + j + " " + k);
@@ -72,12 +71,12 @@ public class Field {
         }*/
 
         if (N==1){
-            result.add(Main.gameObject.FindField(x-1, y, z+1));
-            result.add(Main.gameObject.FindField(x-1, y+1, z));
-            result.add(Main.gameObject.FindField(x, y-1, z+1));
-            result.add(Main.gameObject.FindField(x, y+1, z-1));
-            result.add(Main.gameObject.FindField(x+1, y-1, z));
-            result.add(Main.gameObject.FindField(x+1, y, z-1));
+            result.add(gameObject.FindField(x-1, y, z+1));
+            result.add(gameObject.FindField(x-1, y+1, z));
+            result.add(gameObject.FindField(x, y-1, z+1));
+            result.add(gameObject.FindField(x, y+1, z-1));
+            result.add(gameObject.FindField(x+1, y-1, z));
+            result.add(gameObject.FindField(x+1, y, z-1));
         }
         else{
             for (int i=x-N; i>=x+N; i++){
@@ -85,7 +84,7 @@ public class Field {
                     for (int k=z-N; k>=z+N; k++){
                         if (i+j+k==0)
                         {
-                            result.add(Main.gameObject.FindField(i, j, k));
+                            result.add(gameObject.FindField(i, j, k));
                         }
                     }
                 }
@@ -138,10 +137,11 @@ public class Field {
         ArrayList<Field> curr = new ArrayList<>();
         curr.addAll(this.GetNeighbours(1, gameObject));
         for (Field f: curr) {
-            if(f.getUnit()==null || f.whosfield(gameObject) == player || f.getUnit().animal) {
-                //do nothing
+            if(f.getUnit()==null || f.whosfield(gameObject) == player) {}//do nothing
+            else {
+                if (f.unit.animal) {}
+                else result.add(f);
             }
-            else result.add(f);
         }
         return result;
     }
