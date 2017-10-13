@@ -1,9 +1,11 @@
 package com.sergejninzyy.Models;
 
-import com.sergejninzyy.Main;
+import com.sergejninzyy.GameObject;
+import com.sergejninzyy.Models.Cards.Ability;
 import com.sergejninzyy.Models.Cards.Unit;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Field {
 
@@ -22,6 +24,24 @@ public class Field {
         this.unit = unit;
     }
 
+    public Player whosfield(GameObject gameObject)
+    {
+        for (Player p: gameObject.players) {
+            if (p.getPlayersfields().contains(this)) return p;
+        }
+        return null;
+    }
+
+    public Field copyField()
+    {
+        Unit unit = null;
+        if (this.unit !=null)
+        {
+            unit = this.unit.copyUnit();
+        }
+        return new Field(this.x, this.y, this.z, unit);
+    }
+
     public Unit getUnit() {
         return unit;
     }
@@ -30,38 +50,46 @@ public class Field {
         this.unit = unit;
     }
 
-    public ArrayList<Field> GetNeighbours(int N)
+    public ArrayList<Field> GetNeighbours(int N, GameObject gameObject)
     {
         ArrayList<Field> result = new ArrayList<>();
-      /*for (int dx=-N; dx<=N; dx++)
+
+        /*for (int i=-N; i<=N; i++)
         {
-            int max = -N>=-dx-N? -N :-dx-N;
-            int min = N>=-dx+N? N :-dx+N;
-            for (int dy = max; dy<=min; dy++)
+            int max = -N>-i-N ? -N:-i-N;
+            int min = N < -i+N ? N: -i+N;
+            for (int j = max; j<=min; j++)
             {
-                int dz = -dx-dy;
-                result.add(Main.gameObject.FindField(this.getX()+dx, this.getY()+dy, this.getZ()+dz));
+                int k=-i-j;
+                Field field = gameObject.FindField(i, j, k);
+                if(field!=null && field!=this)
+                {
+                    System.out.println(i + " " + j + " " + k);
+                    result.add(field);
+                }
             }
         }*/
-        for (int i = -N; i <=N ; i++) {
-            for (int j = -N; j <=N ; j++) {
-                for (int k = -N; k <=N; k++) {
-                    int newx = this.x+i;
-                    int newy = this.y+j;
-                    int newz = this.z+k;
-                    if(newx + newy + newz ==0)
-                    {
-                        Field field = Main.gameObject.FindField(newx, newy, newz);
-                        if(field!=null && field!=this)
+
+        if (N==1){
+            result.add(gameObject.FindField(x-1, y, z+1));
+            result.add(gameObject.FindField(x-1, y+1, z));
+            result.add(gameObject.FindField(x, y-1, z+1));
+            result.add(gameObject.FindField(x, y+1, z-1));
+            result.add(gameObject.FindField(x+1, y-1, z));
+            result.add(gameObject.FindField(x+1, y, z-1));
+        }
+        else{
+            for (int i=x-N; i>=x+N; i++){
+                for (int j=y-N; j>=y+N; j++){
+                    for (int k=z-N; k>=z+N; k++){
+                        if (i+j+k==0)
                         {
-                            result.add(field);
+                            result.add(gameObject.FindField(i, j, k));
                         }
                     }
                 }
             }
         }
-        //сделать нормально
-        
         return result;
     }
 
@@ -92,5 +120,29 @@ public class Field {
     public String getCoordinats()
     {
         return x + " " + y + " " + z;
+    }
+
+
+    //TODO дописать остальные способоности
+    public ArrayList<Field> getAimofAbility(Ability ability, Player player, GameObject gameObject) {
+        ArrayList<Field> result = new ArrayList<>();
+        if (ability == Ability.TOVEDICH|| ability == Ability.TOANIMAL) result.add(this);
+        if (ability == Ability.ATTACK||ability == Ability.STAN) result.addAll(this.find_aims_to_attack(player, gameObject));
+
+        return result;
+    }
+
+    private Collection<? extends Field> find_aims_to_attack(Player player, GameObject gameObject) {
+        ArrayList<Field> result = new ArrayList<>();
+        ArrayList<Field> curr = new ArrayList<>();
+        curr.addAll(this.GetNeighbours(1, gameObject));
+        for (Field f: curr) {
+            if(f.getUnit()==null || f.whosfield(gameObject) == player) {}//do nothing
+            else {
+                if (f.unit.animal) {}
+                else result.add(f);
+            }
+        }
+        return result;
     }
 }
