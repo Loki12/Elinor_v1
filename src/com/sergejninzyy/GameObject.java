@@ -152,24 +152,31 @@ public class GameObject {
 
 
     //TODO check
-    public int attack(Field f1, Field f2, GameObject gameObject)
+    //возвращаем эффективность для ИИ
+    public int attack(Field f1, Field f2)
     {
+        Integer current_mark;
+        //если поле которое направлена атака придалжежит ИИ
+        if (f2.whosfield(this) == players.get(1)) current_mark = -1;
+        //если поле не принадлежит ИИ
+        else current_mark = 1;
             f2.getUnit().setHits(f2.getUnit().getHits() - f1.getUnit().getAttack());
             if (f2.getUnit().getHits() < 1) {
-                f2.whosfield(gameObject).dead_units.add(f2.getUnit());
+                f2.whosfield(this).dead_units.add(f2.getUnit());
                 f2.setUnit(null);
-                f2.whosfield(gameObject).getPlayersfields().remove(f2);
-                return 2;
-            } else return 1;
-
+                f2.whosfield(this).getPlayersfields().remove(f2);
+                current_mark*=2;
+            }
+        return current_mark;
     }
 
     //Todo доедлать остальные способности
     //возвращает состояние всего поля и оценку эффективности
     public Pair<GameObject, Integer> Action(Ability ability, Field my_unit_field, Field aim_of_ability, Integer eff) {
+
         Integer mark = eff;
         if (ability == Ability.ATTACK) {
-           mark = this.attack(my_unit_field, aim_of_ability, this);
+           mark = this.attack(my_unit_field, aim_of_ability);
         }
         return new Pair<>(this, mark);
     }

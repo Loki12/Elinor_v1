@@ -71,12 +71,12 @@ public class Field {
         }*/
 
         if (N==1){
-            result.add(gameObject.FindField(x-1, y, z+1));
-            result.add(gameObject.FindField(x-1, y+1, z));
-            result.add(gameObject.FindField(x, y-1, z+1));
-            result.add(gameObject.FindField(x, y+1, z-1));
-            result.add(gameObject.FindField(x+1, y-1, z));
-            result.add(gameObject.FindField(x+1, y, z-1));
+            Field field = gameObject.FindField(x-1, y, z+1); if (field!=null) result.add(field);
+            field = gameObject.FindField(x-1, y+1, z); if (field!=null) result.add(field);
+            field = gameObject.FindField(x, y-1, z+1); if (field!=null) result.add(field);
+            field = gameObject.FindField(x, y+1, z-1); if (field!=null) result.add(field);
+            field = gameObject.FindField(x+1, y-1, z); if (field!=null) result.add(field);
+            field = gameObject.FindField(x+1, y, z-1); if (field!=null) result.add(field);
         }
         else{
             for (int i=x-N; i>=x+N; i++){
@@ -84,7 +84,7 @@ public class Field {
                     for (int k=z-N; k>=z+N; k++){
                         if (i+j+k==0)
                         {
-                            result.add(gameObject.FindField(i, j, k));
+                            Field field = gameObject.FindField(i, j, k); if (field!=null) result.add(field);
                         }
                     }
                 }

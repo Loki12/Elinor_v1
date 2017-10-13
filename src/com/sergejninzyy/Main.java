@@ -70,7 +70,7 @@ public class Main {
 
         //gameObject.find_actions()
         Module_of_prediction module_of_prediction = new Module_of_prediction();
-        GameObject new_gameObject = module_of_prediction.predict(gameObject, 1, 1);
+        GameObject new_gameObject = module_of_prediction.predict(gameObject, 1, 2);
     }
 
     private static void SetRandomUnitonField (Player player, int x, int y, int z, GameObject gameObject)
