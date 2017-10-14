@@ -2,9 +2,12 @@ package com.sergejninzyy.Models;
 
 import com.sergejninzyy.GameObject;
 import com.sergejninzyy.Models.Cards.Ability;
+import com.sergejninzyy.Models.Cards.Narod;
+import com.sergejninzyy.Models.Cards.Unit;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class Module_of_prediction {
 
@@ -19,6 +22,7 @@ public class Module_of_prediction {
     public GameObject predict(GameObject gameObject, int rage, int depth) {
 
         //список возможных состояний после моего хода и их эффективность
+
         ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, 0, gameObject.getPlayer(1));
 
         //сделаем масштабную проверку
@@ -46,33 +50,17 @@ public class Module_of_prediction {
             res.add(local_pair);
         }
         // итого, в переменной res мы получаем значение пар состояний к которым мы можем прийти за один ход и эффективность этих ходов на нужную нам глубину
-
-        //здесь мы должны выбрать один единственный Gameobject который по сути и будет нашим ходом
-        /*Pair<GameObject, Integer> max = new Pair<>(gameObject, 0);
-        for (Pair<GameObject, Integer> pair : res) {
-            if (max.getValue() < pair.getValue()) {
-                max = pair;
-            }
-            System.out.println(pair.getValue());
-        }
-        return max.getKey();*/
-
         return final_chose(res).getKey();
     }
 
-
-    //todo проверить логику происходящего
+    //todo проверить
     private Pair<GameObject, Integer> count_effective(GameObject gameObject, int depth, Integer effectiv) {
-        //сколько раз мы это повторяем
-        //todo проверить деление по модулю
 
-        System.out.println(depth%2);
         ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, effectiv, gameObject.getPlayer(depth % 2));
 
-        double f = 32;
-        //остановка, проверяем
-
-        if (depth == 1) return count(first_steps_effective, gameObject);
+        if (depth == 1){
+            return count(first_steps_effective, gameObject);
+        }
         depth -= 1;
         //для каждого состояния к которому мы можем прийти за этот ход, мы считаем эффективность на несколько ходов вперед
         ArrayList<Pair<GameObject, Integer>> res = new ArrayList<>();
@@ -84,15 +72,12 @@ public class Module_of_prediction {
     }
 
     //todo перепродумать оценку эффективности
-    private Pair<GameObject, Integer> count(ArrayList<Pair<GameObject, Integer>> first_steps_effective, GameObject gameObject) {
+    public  static Pair<GameObject, Integer> count(ArrayList<Pair<GameObject, Integer>> first_steps_effective, GameObject gameObject) {
 
         Integer result = 0;
         for (Pair<GameObject, Integer> pair : first_steps_effective) {
             result += pair.getValue();
         }
-
-
-
         return new Pair<>(gameObject, result / first_steps_effective.size());
 
     }
@@ -102,7 +87,7 @@ public class Module_of_prediction {
     {
         Pair<GameObject, Integer> gameObjectIntegerPair = null;
         if (final_steps.size()!=0) gameObjectIntegerPair = final_steps.get(0);
-        //todo учесть вариант, когда у нас нет достурных ходов
+        //todo учесть вариант, когда у нас нет доступных ходов
         //todo учесть возможность наличия нескольких ходов с одинаковой эффективностью
         for (Pair<GameObject, Integer> pair: final_steps) {
             if (gameObjectIntegerPair.getValue()<pair.getValue())
@@ -121,10 +106,24 @@ public class Module_of_prediction {
         //для каждого варианта действий создаем свой gameobject
         //список пар состояний после хода и поле, на которое мы сейчас походили
         ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps = new ArrayList<>();
+
         for (Field f : player.getPlayersfields()) {
             possible_steps.addAll(possible_steps(f, gameObject));
         }
 
+        //для чекатта
+        //создаем копии текущего состояния с замененными чекаттами
+       //todo здесь тоже все проверить
+        for (Field field: player.getPlayersfields()) {
+            if(field.getUnit().narod == Narod.CHEKATTA)
+            {
+                for (Unit unit: player.dead_units) {
+                    possible_steps.addAll(create_copy_of_gameObject_for_chekatta(gameObject, field, unit));
+                }
+            }
+        }
+
+        //для каждого состояния - запускаем
         //список первых возможных ходов
         /*System.out.println("Список первых возможных ходов");
         for (Pair<Pair<GameObject, Field>, Field> pair: possible_steps) {
@@ -164,10 +163,28 @@ public class Module_of_prediction {
         return possible_actions;
     }
 
-    private ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps(Field old_field, GameObject gameObject) {
 
+    //todo проверить, проверить и еще раз проверить
+    private Collection<? extends Pair<Pair<GameObject, Field>, Field>> create_copy_of_gameObject_for_chekatta(GameObject gameObject, Field field, Unit unit) {
+        GameObject gameObjectClone = gameObject.gameObjectClone();
+        Field copy_old_field = gameObjectClone.FindField(field.getX(), field.getY(), field.getZ());
+        //todo проверить этот момент
+        copy_old_field.setUnit(gameObjectClone.FindUnit(unit.getId()));
+
+        if (field.getUnit()!=null && copy_old_field.getUnit() == null) {
+            System.out.println("Какой-то пипец");
+        }
+        return possible_steps(copy_old_field, gameObjectClone);
+    }
+
+    private ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps(Field old_field, GameObject gameObject) {
         ArrayList<Pair<Pair<GameObject, Field>, Field>> common_result = new ArrayList<>();
+
+        //если я застанен - не могу ходить
+        if (old_field.getUnit().stan) return common_result;
+
         ArrayList<Field> result;
+
 
         //находим всех соседей данного поля
         if (old_field.getUnit().getSteps() == 2) {
@@ -190,9 +207,6 @@ public class Module_of_prediction {
             Field copy_old_field = gameObjectClone.FindField(old_field.getX(), old_field.getY(), old_field.getZ());
             Field copy_new_field = gameObjectClone.FindField(new_field.getX(), new_field.getY(), new_field.getZ());
             gameObjectClone.ChangeFieldofcard(copy_old_field, copy_new_field);
-
-            //todo внимательно посмотреть и понять, нужно ли передавать копию или реальность
-            //new_field = gameObject.FindField(new_field.getX(), new_field.getY(), new_field.getZ());
             Pair<GameObject, Field> curr_pair = new Pair<>(gameObjectClone, copy_new_field);
 
             common_result.add(new Pair<>(curr_pair, old_field));

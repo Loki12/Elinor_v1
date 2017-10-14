@@ -1,6 +1,5 @@
 package com.sergejninzyy.Models;
 import com.sergejninzyy.GameObject;
-import com.sergejninzyy.Main;
 import com.sergejninzyy.Models.Cards.Narod;
 import com.sergejninzyy.Models.Cards.Unit;
 

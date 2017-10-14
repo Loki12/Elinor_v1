@@ -5,10 +5,10 @@ public enum Ability {
     ATTACK,
     HEAL,
     STAN,
-    TOANIMAL,
-    TOVEDICH,
-    TOHITS,
+    TO_ANIMAL,
+    TO_VEDICH,
     COMEBACK_CHEKATTA,
-    DOUBLE_ATTACK, FIRE_ARROW
+    DOUBLE_ATTACK,
+    FIRE_ARROW
 
 }

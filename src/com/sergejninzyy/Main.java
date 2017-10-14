@@ -41,20 +41,22 @@ public class Main {
         }*/
       //Test Game
         //Для игрока
-        SetRandomUnitonField(player, 0, 2,-2, gameObject);
-        SetRandomUnitonField(player, -1, 2, -1, gameObject);
+        Unit unit_for_player = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(), unit_for_player, gameObject.FindField(0,2,-2));
+        //SetRandomUnitonField(player, 0, 2,-2, gameObject);
+        /*SetRandomUnitonField(player, -1, 2, -1, gameObject);
         SetRandomUnitonField(player, 1, 1, -2, gameObject);
         SetRandomUnitonField(player, 0, 1, -1, gameObject);
         SetRandomUnitonField(player, -2, 2, 0, gameObject);
-        SetRandomUnitonField(player, 2, 0, -2, gameObject);
+        SetRandomUnitonField(player, 2, 0, -2, gameObject);*/
 
         //Для ИИ
         /*SetRandomUnitonField(intellect, 0, -2,2);
         SetRandomUnitonField(intellect, 1, -2, 1);
         SetRandomUnitonField(intellect, -1, -1, 2);*/
 
-        Unit ito = new Unit(Narod.ITOSHIN);
-        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),ito, gameObject.FindField(0, 0, 0));
+        Unit unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(0, 0, 0));
         //SetRandomUnitonField(intellect, 0, -1, 1, gameObject);
         /*SetRandomUnitonField(intellect, 2, -2, 0);
         SetRandomUnitonField(intellect, -2, 0, 2);*/
@@ -75,8 +77,7 @@ public class Main {
 
     private static void SetRandomUnitonField (Player player, int x, int y, int z, GameObject gameObject)
     {
-        Unit unit = RandomGenerateUnit();
-        gameObject.AddCardtoPlayeronFiels(player.getNumber(),unit, gameObject.FindField(x, y, z));
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(),RandomGenerateUnit(gameObject), gameObject.FindField(x, y, z));
     }
 
   /*  private static Field ChoseField(Player player, Unit unit) {
@@ -96,9 +97,9 @@ public class Main {
         return field;
     }
 */
-    private static Unit RandomGenerateUnit()
+    private static Unit RandomGenerateUnit(GameObject gameObject)
     {
-        return new Unit(Narod.values()[new Random().nextInt(Narod.values().length)]);
+        return new Unit(Narod.values()[new Random().nextInt(Narod.values().length)], gameObject);
     }
 
   /*  private static Unit RandomGenerateUnitreturn(Unit unit)

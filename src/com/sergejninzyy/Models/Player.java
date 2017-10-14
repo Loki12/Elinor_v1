@@ -26,7 +26,7 @@ public class Player {
         }
 
         for (Unit real_unit: this.dead_units) {
-            player.dead_units.add(real_unit.copyUnit());
+            player.dead_units.add(real_unit.copyUnit(gameObjectClone));
         }
         return player;
     }

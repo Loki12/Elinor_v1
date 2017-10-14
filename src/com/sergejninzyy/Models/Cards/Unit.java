@@ -1,32 +1,50 @@
 package com.sergejninzyy.Models.Cards;
 
+import com.sergejninzyy.GameObject;
+import com.sergejninzyy.Models.Field;
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 
 public class Unit {
 
+
     private int id;
     public Narod narod;
-    private int hits;
+    public int hits;
     public boolean stan;
     public boolean animal;
+    public Field who_i_stan;
 
-    public Unit(Narod narod) {
-        this.hits = 1;
+    public Unit(Narod narod, GameObject gameObject) {
         this.narod = narod;
+        switch (narod){
+            case TAVR: hits = 3; break;
+            case ITOSHIN: hits = 1; break;
+            default: hits = 2; break;
+        }
+        id = gameObject.getUnit_id_counter();
     }
 
-    public Unit copyUnit()
+    public Unit copyUnit(GameObject gameObject)
     {
-        Unit unit = new Unit(this.narod);
+        Unit unit = new Unit(this.narod, gameObject);
+//такой же id, что
         unit.setId(this.id);
         unit.setHits(this.hits);
+        unit.animal = this.animal;
+        unit.stan = this.stan;
+        if (who_i_stan == null) unit.who_i_stan = null; else unit.who_i_stan = gameObject.FindField(this.who_i_stan);
         return unit;
     }
 
+
     public int getSteps()
     {
-        if (this.narod == Narod.GUAVAR) return 2;
-        else return 1;
+        switch (narod){
+            case GUAVAR: return 2;
+            default: return 1;
+        }
     }
 
     public Narod getNarod() {
@@ -55,23 +73,27 @@ public class Unit {
 
     public int getAttack()
     {
-        if (this.narod == Narod.CHEKATTA || this.narod == Narod.ULUTAU) return 0;
-        if (this.narod == Narod.ITOSHIN) return 3;
-        if (this.narod == Narod.DJUNIT || this.narod == Narod.MECHNIC || this.narod == Narod.GUAVAR || this.narod == Narod.VEDICH
-                || this.narod == Narod.TAVR) return 1;
-        else return -1;
+        switch (narod)
+        {
+            case ITOSHIN: return 3;
+            case CHEKATTA: return 0;
+            case ULUTAU: return 0;
+            default: return 1;
+        }
     }
 
     public ArrayList<Ability> getAbilities() {
         ArrayList<Ability> result = new ArrayList<>();
-
-        if (this.narod!=Narod.CHEKATTA && this.narod!=Narod.ULUTAU && this.narod!=Narod.MECHNIC) result.add(Ability.ATTACK);
-        if (this.narod==Narod.DJUNIT ) result.add(Ability.DOUBLE_ATTACK);
-        if (this.narod==Narod.CHEKATTA) result.add(Ability.COMEBACK_CHEKATTA);
-        if (this.narod==Narod.ULUTAU) { result.add(Ability.HEAL); result.add(Ability.STAN);}
-        if (this.narod==Narod.VEDICH) { result.add(Ability.TOANIMAL); result.add(Ability.TOVEDICH);}
-        if (this.narod==Narod.MECHNIC) result.add(Ability.FIRE_ARROW);
-
+        switch (narod){
+            case ULUTAU: result.add(Ability.STAN); result.add(Ability.HEAL); break;
+            case MECHNIC: result.add(Ability.FIRE_ARROW); break;
+            case CHEKATTA: result.add(Ability.COMEBACK_CHEKATTA); break;
+            case DJUNIT: result.add(Ability.ATTACK); result.add(Ability.DOUBLE_ATTACK); break;
+            case VEDICH: result.add(Ability.TO_ANIMAL); break;
+            //у итошина, тавра и гуавара нет других способностей, кроме атаки
+            default: result.add(Ability.ATTACK); break;
+        }
         return result;
     }
+
 }
