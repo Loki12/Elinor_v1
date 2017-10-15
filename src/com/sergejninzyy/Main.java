@@ -6,14 +6,12 @@ import com.sergejninzyy.Models.Module_of_prediction;
 import com.sergejninzyy.Models.Player;
 
 import java.io.*;
+import java.util.Date;
 import java.util.Random;
 
 public class Main {
 
     private static final int LVL = 2;
-    //public static GameObject gameObject = new GameObject(LVL);
-    //Player player = gameObject.getPlayer(0);
-    //Player intellect = gameObject.getPlayer(1);
 
     public static void main(String[] args) throws IOException {
 
@@ -41,8 +39,18 @@ public class Main {
         }*/
       //Test Game
         //Для игрока
-        Unit unit_for_player = new Unit(Narod.ITOSHIN, gameObject);
+        Unit unit_for_player = new Unit(Narod.TAVR, gameObject);
         gameObject.AddCardtoPlayeronFiels(player.getNumber(), unit_for_player, gameObject.FindField(0,2,-2));
+        unit_for_player = new Unit(Narod.TAVR, gameObject);
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(), unit_for_player, gameObject.FindField(-1,2,-1));
+        unit_for_player = new Unit(Narod.TAVR, gameObject);
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(), unit_for_player, gameObject.FindField(1,1,-2));
+        unit_for_player = new Unit(Narod.TAVR, gameObject);
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(), unit_for_player, gameObject.FindField(0,1,-1));
+        unit_for_player = new Unit(Narod.TAVR, gameObject);
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(), unit_for_player, gameObject.FindField(-2,2,0));
+        unit_for_player = new Unit(Narod.TAVR, gameObject);
+        gameObject.AddCardtoPlayeronFiels(player.getNumber(), unit_for_player, gameObject.FindField(2,0,-2));
         //SetRandomUnitonField(player, 0, 2,-2, gameObject);
         /*SetRandomUnitonField(player, -1, 2, -1, gameObject);
         SetRandomUnitonField(player, 1, 1, -2, gameObject);
@@ -51,12 +59,21 @@ public class Main {
         SetRandomUnitonField(player, 2, 0, -2, gameObject);*/
 
         //Для ИИ
+        Unit unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(0, -2, 2));
+        unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(1, -2, 1));
+        unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(-1, -1, 2));
+        unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(0, -1, 1));
+        unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(2, -2, 0));
+        unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
+        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(-2, 0, 2));
         /*SetRandomUnitonField(intellect, 0, -2,2);
         SetRandomUnitonField(intellect, 1, -2, 1);
         SetRandomUnitonField(intellect, -1, -1, 2);*/
-
-        Unit unit_for_ii = new Unit(Narod.ITOSHIN, gameObject);
-        gameObject.AddCardtoPlayeronFiels(intellect.getNumber(),unit_for_ii, gameObject.FindField(0, 0, 0));
         //SetRandomUnitonField(intellect, 0, -1, 1, gameObject);
         /*SetRandomUnitonField(intellect, 2, -2, 0);
         SetRandomUnitonField(intellect, -2, 0, 2);*/
@@ -72,7 +89,11 @@ public class Main {
 
         //gameObject.find_actions()
         Module_of_prediction module_of_prediction = new Module_of_prediction();
-        GameObject new_gameObject = module_of_prediction.predict(gameObject, 1, 2);
+
+        Date current = new Date();
+        GameObject new_gameObject = module_of_prediction.predict(gameObject, 1, 4);
+        System.out.println(GameObject.gameObjectcounter);
+        System.out.println(new Date().getTime() - current.getTime() + " млсек");
     }
 
     private static void SetRandomUnitonField (Player player, int x, int y, int z, GameObject gameObject)
@@ -101,12 +122,5 @@ public class Main {
     {
         return new Unit(Narod.values()[new Random().nextInt(Narod.values().length)], gameObject);
     }
-
-  /*  private static Unit RandomGenerateUnitreturn(Unit unit)
-    {
-        return new Unit(Narod.values()[new Random().nextInt(Narod.values().length)]);
-    }
-*/
-
 
 }

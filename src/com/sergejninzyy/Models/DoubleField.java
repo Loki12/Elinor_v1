@@ -1,7 +1,5 @@
 package com.sergejninzyy.Models;
 
-import com.sergejninzyy.Models.Cards.Unit;
-
 public class DoubleField extends Field{
 
     public Field field_field;

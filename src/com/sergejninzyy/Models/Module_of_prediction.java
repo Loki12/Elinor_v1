@@ -7,6 +7,7 @@ import com.sergejninzyy.Models.Cards.Unit;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class Module_of_prediction {
@@ -22,26 +23,9 @@ public class Module_of_prediction {
     public GameObject predict(GameObject gameObject, int rage, int depth) {
 
         //список возможных состояний после моего хода и их эффективность
-
         ArrayList<Pair<GameObject, Integer>> first_steps_effective = first_steps(gameObject, 0, gameObject.getPlayer(1));
 
-        //сделаем масштабную проверку
-
-        /*for (Pair<GameObject, Integer> pair: first_steps_effective) {
-            System.out.println("Состояние номер " + pair.getKey().toString() + "Эффективность этого состояния = " + pair.getValue());
-
-            System.out.println("Игрок номер 0 и список его полей");
-            for (Field field: pair.getKey().players.get(0).getPlayersfields()) {
-                System.out.println(field.getCoordinats());
-            }
-
-            System.out.println("ИИ и список его полей");
-            for (Field field: pair.getKey().players.get(1).getPlayersfields()) {
-                System.out.println(field.getCoordinats());
-            }
-            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }*/
-
+        //сюда мы будем записывать вызоможные состояния с оценкой их эффективности на несколько шагов вперед
         ArrayList<Pair<GameObject, Integer>> res = new ArrayList<>();
 
         //для каждого состояния к которому мы можем прийти за наш ход, мы считаем эффективность на несколько ходов вперед
@@ -68,7 +52,7 @@ public class Module_of_prediction {
             Pair<GameObject, Integer> localpair = (count_effective(gameObjectIntegerPair.getKey(), depth, gameObjectIntegerPair.getValue()));
             res.add(localpair);
         }
-        return null;
+        return count(res, gameObject);
     }
 
     //todo перепродумать оценку эффективности
@@ -78,7 +62,7 @@ public class Module_of_prediction {
         for (Pair<GameObject, Integer> pair : first_steps_effective) {
             result += pair.getValue();
         }
-        return new Pair<>(gameObject, result / first_steps_effective.size());
+        return new Pair<>(gameObject, result);
 
     }
 
@@ -113,7 +97,7 @@ public class Module_of_prediction {
 
         //для чекатта
         //создаем копии текущего состояния с замененными чекаттами
-       //todo здесь тоже все проверить
+        //todo здесь тоже все проверить
         for (Field field: player.getPlayersfields()) {
             if(field.getUnit().narod == Narod.CHEKATTA)
             {
@@ -122,13 +106,6 @@ public class Module_of_prediction {
                 }
             }
         }
-
-        //для каждого состояния - запускаем
-        //список первых возможных ходов
-        /*System.out.println("Список первых возможных ходов");
-        for (Pair<Pair<GameObject, Field>, Field> pair: possible_steps) {
-            System.out.println(pair.getKey().getValue().getCoordinats());
-        }*/
 
         //список состояний доcки после хода и действия
         ArrayList<Pair<GameObject, Integer>> possible_actions = new ArrayList<>();
@@ -140,14 +117,11 @@ public class Module_of_prediction {
             //для каждой способности
             for (Ability ability : abilities) {
                 //мы находим цели этой способности, с учетом поля на которое мы уже походили
-                ArrayList<Field> aimofability = pair.getKey().getValue().getAimofAbility(ability, pair.getValue().whosfield(gameObject), gameObject);
-
+                Field current_field  = pair.getKey().getValue();
+                GameObject gameObject1 = pair.getKey().getKey();
+                ArrayList<Field> aimofability = current_field.getAimofAbility(ability, current_field.whosfield(gameObject1), gameObject1);
                 //если нет целей для способности
-                if (aimofability.size() == 0)
-                {
-                    possible_actions.add(new Pair<>(pair.getKey().getKey(), eff));
-                }
-
+                if (aimofability.size() == 0)  { possible_actions.add(new Pair<>(pair.getKey().getKey(), eff)); }
                 //для каждого поля, на которое у нас направлена способность
                 for (Field field : aimofability) {
                     GameObject gameObjectClone = pair.getKey().getKey().gameObjectClone();
@@ -159,6 +133,26 @@ public class Module_of_prediction {
                 }
             }
         }
+
+
+       /* for (Pair<GameObject, Integer> pair: possible_actions) {
+            System.out.println("Состояние номер " + pair.getKey().toString() + "Эффективность этого состояния = " + pair.getValue());
+        }*/
+      /*      System.out.println("Игрок номер 0 и список его полей");
+            for (Field field: pair.getKey().players.get(0).getPlayersfields()) {
+                if (field.getUnit() == null) System.out.println("!!!!!!!!!!!!!!Ноль");
+                else System.out.println(field.getUnit().narod + " " + field.getCoordinats());
+            }
+
+            System.out.println("ИИ и список его полей");
+            for (Field field: pair.getKey().players.get(1).getPlayersfields()) {
+                if (field.getUnit() == null) System.out.println("!!!!!!!!!!!!!!Ноль");
+                else System.out.println(field.getUnit().narod + " " + field.getCoordinats());
+            }
+            System.out.println("_____________________________________");
+            System.out.println();
+        }*/
+
 
         return possible_actions;
     }
@@ -179,13 +173,10 @@ public class Module_of_prediction {
 
     private ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps(Field old_field, GameObject gameObject) {
         ArrayList<Pair<Pair<GameObject, Field>, Field>> common_result = new ArrayList<>();
-
         //если я застанен - не могу ходить
         if (old_field.getUnit().stan) return common_result;
 
         ArrayList<Field> result;
-
-
         //находим всех соседей данного поля
         if (old_field.getUnit().getSteps() == 2) {
             //TODO исправить ходы у гуавара

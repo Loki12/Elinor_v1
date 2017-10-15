@@ -13,13 +13,14 @@ import java.util.Scanner;
 
 public class GameObject {
 
+    public static int gameObjectcounter = 0;
     public int unit_id_counter;
     public ArrayList<Player> players;
     public ArrayList<Field> fields;
     public int lvl;
 
     public GameObject( int lvl){
-
+        ++gameObjectcounter;
         this.lvl = lvl;
         fields = new ArrayList<>();
         players = new ArrayList<>();
@@ -185,15 +186,15 @@ public class GameObject {
             System.out.println("Какого я ухзнаю о стане только на уровне Action");
         }
             switch (ability){
-                case ATTACK: mark += this.attack(my_unit_field, aim_of_ability);
-                case STAN: mark += this.stan(my_unit_field, aim_of_ability);
-                case HEAL: mark += this.heal(my_unit_field, aim_of_ability);
-                case DOUBLE_ATTACK: mark += this.double_attack(my_unit_field, aim_of_ability);
-                case FIRE_ARROW: mark += this.attack(my_unit_field, aim_of_ability);
+                case ATTACK: mark += this.attack(my_unit_field, aim_of_ability); break;
+                case STAN: mark += this.stan(my_unit_field, aim_of_ability); break;
+                case HEAL: mark += this.heal(my_unit_field, aim_of_ability); break;
+                case DOUBLE_ATTACK: mark += this.double_attack(my_unit_field, aim_of_ability); break;
+                case FIRE_ARROW: mark += this.attack(my_unit_field, aim_of_ability); break;
                 //todo заменить на int на float
-                case TO_ANIMAL: aim_of_ability.getUnit().animal=true; mark += 0;
-                case TO_VEDICH: aim_of_ability.getUnit().animal=false; mark += 0;
-                case COMEBACK_CHEKATTA: mark += this.come_back_chekatta(my_unit_field, aim_of_ability, eff);
+                case TO_ANIMAL: aim_of_ability.getUnit().animal=true; mark += 0; break;
+                case TO_VEDICH: aim_of_ability.getUnit().animal=false; mark += 0; break;
+                case COMEBACK_CHEKATTA: mark += this.come_back_chekatta(my_unit_field, aim_of_ability, eff); break;
 
             }
         return new Pair<>(this, mark);

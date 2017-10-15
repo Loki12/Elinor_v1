@@ -134,37 +134,4 @@ public class Intellect extends Player {
         return list;
     }
 
-
-   /* public List<Field> FreeOurFields()
-    {
-
-        //что делать, если это не первый и не последний ход
-            //вычисляем на какие мы можем ходит
-            //у всех своих берем соседние
-            //убираем свои поля и повторяющиеся
-            //отбрасываем занятые
-
-        ArrayList<Field> curr = new ArrayList<>();
-
-        //у всех своих берем соседние
-        for (Field f: this.getPlayersfields()) {
-            curr.addAll(f.getNeighborfield());
-        }
-        //убираем все свои поля
-        curr.removeAll(this.getPlayersfields());
-        //убираем все повторячющиеся
-        HashSet<Field> sort_arr = new HashSet<>(curr);
-
-        //отбрасываем занятые
-        for (Field f: sort_arr) {
-            if (gameObject.getPlayer(0).getPlayersfields().contains(f))
-            {
-                sort_arr.remove(f);
-            }
-        }
-
-        List<Field> list = new ArrayList<>(sort_arr);
-        return list;
-    }*/
-
 }

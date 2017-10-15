@@ -71,25 +71,11 @@ public class Field {
         this.unit = unit;
     }
 
+
+    //todo refactor
     public ArrayList<Field> GetNeighbours(int N, GameObject gameObject)
     {
         ArrayList<Field> result = new ArrayList<>();
-
-        /*for (int i=-N; i<=N; i++)
-        {
-            int max = -N>-i-N ? -N:-i-N;
-            int min = N < -i+N ? N: -i+N;
-            for (int j = max; j<=min; j++)
-            {
-                int k=-i-j;
-                Field field = gameObject.FindField(i, j, k);
-                if(field!=null && field!=this)
-                {
-                    System.out.println(i + " " + j + " " + k);
-                    result.add(field);
-                }
-            }
-        }*/
 
         if (N==1){
             Field field = gameObject.FindField(x-1, y, z+1); if (field!=null) result.add(field);
@@ -207,7 +193,7 @@ public class Field {
         ArrayList<Field> result = new ArrayList<>();
         for (Field f: this.GetNeighbours(N, gameObject)) {
             if (f.getUnit()!=null && f.whosfield(gameObject)!=player &&
-                    !f.getUnit().animal && (f.unit.narod == Narod.GUAVAR && this.unit.narod == Narod.GUAVAR)) result.add(f);
+                    !f.getUnit().animal && !(f.unit.narod == Narod.GUAVAR && this.unit.narod == Narod.GUAVAR)) result.add(f);
         }
         return result;
     }
