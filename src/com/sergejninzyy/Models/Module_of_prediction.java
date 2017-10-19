@@ -7,7 +7,6 @@ import com.sergejninzyy.Models.Cards.Unit;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class Module_of_prediction {
@@ -123,36 +122,31 @@ public class Module_of_prediction {
                 //если нет целей для способности
                 if (aimofability.size() == 0)  { possible_actions.add(new Pair<>(pair.getKey().getKey(), eff)); }
                 //для каждого поля, на которое у нас направлена способность
-                for (Field field : aimofability) {
-                    GameObject gameObjectClone = pair.getKey().getKey().gameObjectClone();
-                    Field copy_new_field_aim_for_attack = gameObjectClone.FindField(field.getX(), field.getY(), field.getZ());
-                    //получаем копию нашего поля в копии gameobject
-                    Field curr = pair.getKey().getValue();
-                    Field copy_old_field = gameObjectClone.FindField(curr.getX(), curr.getY(), curr.getZ());
-                    possible_actions.add(gameObjectClone.Action(ability, copy_old_field, copy_new_field_aim_for_attack, eff));
+                else{
+                    for (Field field : aimofability) {
+                        GameObject gameObjectClone = pair.getKey().getKey().gameObjectClone();
+                        Field copy_new_field_aim_for_attack = gameObjectClone.FindField(field.getX(), field.getY(), field.getZ());
+                        if (field instanceof DoubleField)
+                        {
+                            Field first_field = ((DoubleField) field).first_field;
+                            Field second_field  = ((DoubleField) field).second_Field;
+                            copy_new_field_aim_for_attack = new DoubleField
+                                    (gameObjectClone.FindField(first_field.getX(), first_field.getY(), first_field.getZ()),
+                                            gameObjectClone.FindField(second_field.getX(), second_field.getY(), second_field.getZ()));
+                        }
+
+                        if (field.getX() == -10)
+                        {
+                            copy_new_field_aim_for_attack = field;
+                        }
+                        //получаем копию нашего поля в копии gameobject
+                        Field curr = pair.getKey().getValue();
+                        Field copy_old_field = gameObjectClone.FindField(curr.getX(), curr.getY(), curr.getZ());
+                        possible_actions.add(gameObjectClone.Action(ability, copy_old_field, copy_new_field_aim_for_attack, eff));
+                    }
                 }
             }
         }
-
-
-       /* for (Pair<GameObject, Integer> pair: possible_actions) {
-            System.out.println("Состояние номер " + pair.getKey().toString() + "Эффективность этого состояния = " + pair.getValue());
-        }*/
-      /*      System.out.println("Игрок номер 0 и список его полей");
-            for (Field field: pair.getKey().players.get(0).getPlayersfields()) {
-                if (field.getUnit() == null) System.out.println("!!!!!!!!!!!!!!Ноль");
-                else System.out.println(field.getUnit().narod + " " + field.getCoordinats());
-            }
-
-            System.out.println("ИИ и список его полей");
-            for (Field field: pair.getKey().players.get(1).getPlayersfields()) {
-                if (field.getUnit() == null) System.out.println("!!!!!!!!!!!!!!Ноль");
-                else System.out.println(field.getUnit().narod + " " + field.getCoordinats());
-            }
-            System.out.println("_____________________________________");
-            System.out.println();
-        }*/
-
 
         return possible_actions;
     }
@@ -171,7 +165,7 @@ public class Module_of_prediction {
         return possible_steps(copy_old_field, gameObjectClone);
     }
 
-    private ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps(Field old_field, GameObject gameObject) {
+    public ArrayList<Pair<Pair<GameObject, Field>, Field>> possible_steps(Field old_field, GameObject gameObject) {
         ArrayList<Pair<Pair<GameObject, Field>, Field>> common_result = new ArrayList<>();
         //если я застанен - не могу ходить
         if (old_field.getUnit().stan) return common_result;
@@ -188,7 +182,10 @@ public class Module_of_prediction {
         ArrayList<Field> free_fields = new ArrayList<>();
         for (Field field : result) {
             if (field.getUnit() == null) {
-                free_fields.add(field);
+                //todo проверить, как будет время
+                if (gameObject.sum_of_dead() != 0 || !(field.getX() == 0 && field.getY() == 0 && field.getZ() == 0) ) {
+                    free_fields.add(field);
+                }
             }
         }
 

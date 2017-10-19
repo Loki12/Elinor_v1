@@ -63,15 +63,31 @@ public class GameObject {
         GameObject gameObjectClone = new GameObject(this.lvl);
         gameObjectClone.setUnit_id_counter(this.unit_id_counter);
         gameObjectClone.fields.clear();
+
+        //поля без юнитов
         for (Field real_field:this.fields) {
             gameObjectClone.fields.add(real_field.copyField_withoutUnit(this));
         }
 
+        //теперь юниты без тех, кого онии станят
         for (int i = 0; i < gameObjectClone.fields.size(); i++) {
             if (this.fields.get(i).getUnit() == null) { gameObjectClone.fields.get(i).setUnit(null); }
-            else gameObjectClone.fields.get(i).setUnit(this.fields.get(i).getUnit().copyUnit(this));
+            else gameObjectClone.fields.get(i).setUnit(this.fields.get(i).getUnit().copyUnit_withOut_who_i_stan(this));
         }
 
+        //теперь копириуем тех, кого они станят
+        for (int i = 0; i < gameObjectClone.fields.size(); i++) {
+            if (this.fields.get(i).getUnit()!=null)
+            {
+                if (this.fields.get(i).getUnit().who_i_stan!=null)
+                {
+                    Field field = this.fields.get(i).getUnit().who_i_stan;
+                    gameObjectClone.fields.get(i).getUnit().who_i_stan = gameObjectClone.FindField(field.getX(), field.getY(), field.getZ());
+                }
+            }
+        }
+
+        //и привязываем поля к игрокам
         gameObjectClone.players.clear();
         for (Player real_player:this.players) {
             gameObjectClone.players.add(real_player.copyPlayer(gameObjectClone));
@@ -102,6 +118,7 @@ public class GameObject {
                 fields.add(field);
             }
         }
+        scanner.close();
     }
 
 
@@ -141,7 +158,6 @@ public class GameObject {
         //удаляешь со старого поля юнит
         //удаляешь поле из пула игрока
         //добавляешь в пул игрока новое поле
-
         //если я улутау, то при ходе я автоматически оставялю без стана того, кого я станю
         if (old_field.getUnit().narod == Narod.ULUTAU && old_field.getUnit().who_i_stan!=null) {
             //переписать через set/get who i stan
@@ -232,7 +248,7 @@ public class GameObject {
     private Integer double_attack(Field my_unit_field, Field aim_of_ability) {
 
         if (aim_of_ability instanceof DoubleField){
-         return attack(my_unit_field, ((DoubleField) aim_of_ability).field_field) +
+         return attack(my_unit_field, ((DoubleField) aim_of_ability).first_field) +
             attack(my_unit_field, ((DoubleField) aim_of_ability).second_Field);
         }
         else return attack(my_unit_field, aim_of_ability);
@@ -248,11 +264,14 @@ public class GameObject {
     //todo переписать, чтобы учитывать кого застанил
     private Integer stan(Field my_unit_field, Field aim_of_ability) {
         //отмечаем у себя кого я станю
+        if (aim_of_ability.getUnit() == null)
+        {
+            System.out.println("Косяк в stan");
+        }
         my_unit_field.getUnit().who_i_stan = aim_of_ability;
         //отмечают у того, кого станю, он застанен
         aim_of_ability.getUnit().stan = true;
         if (my_unit_field.whosfield(this) == players.get(0)) return -1;
-        //if (my_unit_field.whosfield(this) == players.get(1)) return 1;
         else return 1;
     }
 
@@ -267,6 +286,24 @@ public class GameObject {
         else current_mark = 1;
         f2.getUnit().setHits(f2.getUnit().getHits() - f1.getUnit().getAttack());
         if (f2.getUnit().getHits() < 1) {
+
+            //нужно найти, если кто-то станит это поле и убрать пометку стана
+
+            if(f2.getUnit().stan)
+            {
+                for (Field field: fields)
+                    {
+                        if(field.getUnit() != null) {
+                            if (field.getUnit().narod == Narod.ULUTAU && field.getUnit().who_i_stan!= null) {
+                                if (field.getUnit().who_i_stan == f2) {
+                                    field.getUnit().who_i_stan = null;
+                                }
+                            }
+                        }
+                    }
+            }
+
+
             f2.whosfield(this).dead_units.add(f2.getUnit());
             f2.setUnit(null);
             f2.whosfield(this).getPlayersfields().remove(f2);
@@ -278,9 +315,22 @@ public class GameObject {
     public Unit FindUnit(int id) {
 
         for (Field field: this.fields) {
-            if (field.getUnit().getId() == id)
+            if (field.getUnit()!=null)
             {
-                return field.getUnit();
+                if(field.getUnit().getId()==id)
+                {
+                    return field.getUnit();
+                }
+            }
+        }
+        for (Player player: this.players)
+        {
+            for (Unit unit: player.dead_units)
+            {
+                if (unit.getId() == id)
+                {
+                    return unit;
+                }
             }
         }
         return null;
@@ -288,5 +338,27 @@ public class GameObject {
 
     public Field FindField(Field real_field) {
         return this.FindField(real_field.getX(), real_field.getY(), real_field.getZ());
+    }
+
+    public String String() {
+        StringBuilder result = new StringBuilder();
+
+        for (Player player: players){
+            result.append("Игрок номер ").append(player.getNumber()).append(System.lineSeparator());
+            for(Field field: player.getPlayersfields())
+            {
+                result.append(field.getUnit().narod).append(" Хиты = ").append(field.getUnit().hits).append(" Координаты = ").append(field.getCoordinats()).append(System.lineSeparator());
+            }
+        }
+        return String.valueOf(result);
+    }
+
+    public int sum_of_dead() {
+        int res = 0;
+        for (Player player: players)
+        {
+            res+=player.dead_units.size();
+        }
+        return res;
     }
 }

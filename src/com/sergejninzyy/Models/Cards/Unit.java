@@ -16,6 +16,7 @@ public class Unit {
     public boolean animal;
     public Field who_i_stan;
 
+
     public Unit(Narod narod, GameObject gameObject) {
         this.narod = narod;
         switch (narod){
@@ -34,10 +35,33 @@ public class Unit {
         unit.setHits(this.hits);
         unit.animal = this.animal;
         unit.stan = this.stan;
-        if (who_i_stan == null) unit.who_i_stan = null; else unit.who_i_stan = gameObject.FindField(this.who_i_stan);
+        if (who_i_stan == null) unit.who_i_stan = null;
+        else
+        {
+            Field field = gameObject.FindField(this.who_i_stan);
+            if (field.getUnit() != null)
+            {
+                unit.who_i_stan = field;
+            }
+            else
+            {
+                System.out.println("Косяк в copyUnit");
+            }
+        }
         return unit;
     }
 
+    public Unit copyUnit_withOut_who_i_stan(GameObject gameObject) {
+
+        Unit unit = new Unit(this.narod, gameObject);
+//такой же id, что
+        unit.setId(this.id);
+        unit.setHits(this.hits);
+        unit.animal = this.animal;
+        unit.stan = this.stan;
+
+        return unit;
+    }
 
     public int getSteps()
     {
@@ -89,11 +113,12 @@ public class Unit {
             case MECHNIC: result.add(Ability.FIRE_ARROW); break;
             case CHEKATTA: result.add(Ability.COMEBACK_CHEKATTA); break;
             case DJUNIT: result.add(Ability.ATTACK); result.add(Ability.DOUBLE_ATTACK); break;
-            case VEDICH: result.add(Ability.TO_ANIMAL); break;
+            case VEDICH: result.add(Ability.TO_ANIMAL); result.add(Ability.ATTACK); break;
             //у итошина, тавра и гуавара нет других способностей, кроме атаки
             default: result.add(Ability.ATTACK); break;
         }
         return result;
     }
+
 
 }

@@ -157,7 +157,7 @@ public class Field {
         //сначала добавим варианты для одной атаки
         curr_result = (ArrayList<Field>) this.find_aims_to_attack_stan(player, gameObject, 1);
 
-        if (curr_result.size()==1) result.addAll(curr_result);
+        if (curr_result.size()<2) result.addAll(curr_result);
         else
         {
             result.addAll(recursive_findind_of_double_attack_aims_from_array_of_one_aims(curr_result, curr_result.size()));
@@ -172,7 +172,7 @@ public class Field {
         {
             for (int j= i-1; j!=0; j--)
             {
-                doubleFields.add(new DoubleField(curr_result.get(i), curr_result.get(j)));
+                doubleFields.add(new DoubleField(curr_result.get(i-1), curr_result.get(j-1)));
             }
         }
         return doubleFields;
